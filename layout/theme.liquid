@@ -1,0 +1,113 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ settings.text_direction }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_button }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://cdn.shopify.com">
+  <link rel="preconnect" href="https://fonts.shopifycdn.com">
+  {%- if settings.favicon != blank -%}
+    <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png" />
+  {%- endif -%}
+
+  {%- render 'seo-title' -%}
+
+  {%- if page_description -%}
+  <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {%- render 'social-meta-tags' -%}
+
+  {%- render 'font-face' -%}
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  {%- render 'css-variables' -%}
+
+  <script>
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+
+    window.theme = window.theme || {};
+    theme.routes = {
+      home: "{{ routes.root_url }}",
+      cart: "{{ routes.cart_url | append: '.js' }}",
+      cartPage: "{{ routes.cart_url }}",
+      cartAdd: "{{ routes.cart_add_url | append: '.js' }}",
+      cartChange: "{{ routes.cart_change_url | append: '.js' }}"
+    };
+    theme.strings = {
+      soldOut: {{ 'products.product.sold_out' | t | json }},
+      unavailable: {{ 'products.product.unavailable' | t | json }},
+      inStockLabel: {{ 'products.product.in_stock_label' | t | json }},
+      stockLabel: {{ 'products.product.stock_label' | t: count: '[count]' | json }},
+      willNotShipUntil: {{ 'products.product.will_not_ship_until' | t: date: '[date]' | json }},
+      willBeInStockAfter: {{ 'products.product.will_be_in_stock_after' | t: date: '[date]' | json }},
+      waitingForStock: {{ 'products.product.waiting_for_stock' | t | json }},
+      savePrice: {{ 'products.general.save_html' | t: saved_amount: '[saved_amount]' | json }},
+      cartEmpty: {{ 'cart.general.empty' | t | json }},
+      cartTermsConfirmation: {{ 'cart.general.terms_confirm' | t | json }},
+      searchCollections: {{ 'general.search.collections' | t | json }},
+      searchPages: {{ 'general.search.pages' | t | json }},
+      searchArticles: {{ 'general.search.articles' | t | json }}
+    };
+    theme.settings = {
+      dynamicVariantsEnable: true,
+      cartType: {{ settings.cart_type | json }},
+      isCustomerTemplate: {% if request.page_type contains 'customers/' %}true{% else %}false{% endif %},
+      moneyFormat: {{ shop.money_format | json }},
+      saveType: {{ settings.product_save_type | json }},
+      productImageSize: {{ settings.product_grid_image_size | json }},
+      productImageCover: {{ settings.product_grid_image_fill }},
+      predictiveSearch: {{ settings.predictive_search_enabled }},
+      predictiveSearchType: {{ settings.search_type | json }},
+      quickView: {{ settings.quick_shop_enable }},
+      themeName: 'Impulse',
+      themeVersion: "5.2.1"
+    };
+  </script>
+
+  {{ content_for_header }}
+
+  <script src="{{ 'vendor-scripts-v10.js' | asset_url | split: '?' | first }}" defer="defer"></script>
+
+  {%- if shop.enabled_currencies.size > 1 -%}
+    <link rel="preload" as="style" href="{{ 'currency-flags.css' | asset_url | split: '?' | first }}" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="{{ 'currency-flags.css' | asset_url | split: '?' | first }}">
+  {%- endif -%}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+
+  {%- if request.page_type contains 'customers/' -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+</head>
+
+<body class="template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% if request.path == '/challenge' %} template-challange{% endif %}" data-center-text="{{ settings.type_body_align_text }}" data-button_style="{{ settings.button_style }}" data-type_header_capitalize="{{ settings.type_header_capitalize }}" data-type_headers_align_text="{{ settings.type_headers_align_text }}" data-type_product_capitalize="{{ settings.type_product_capitalize }}" data-swatch_style="{{ settings.swatch_style }}" {% if settings.disable_animations %}data-disable-animations="true"{% endif %}>
+
+  <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  <div id="PageContainer" class="page-container">
+    {%- section 'header' -%}
+    {%- section 'announcement2' -%}
+
+      <main class="main-content" id="MainContent">
+        {{ content_for_layout }}
+      </main>
+
+      {%- section 'footer-promotions' -%}
+      {%- section 'footer' -%}
+
+  </div>
+
+  {%- section 'newsletter-popup' -%}
+
+  {%- liquid
+    render 'video-modal'
+    render 'photoswipe-template'
+  -%}
+
+<script data-peak-early-tap>(function(i,s,p){if(i.__peakCheckoutLoaded||i.__peakCheckoutEarly)return;var y="^/([a-z]{2}(-[a-z]{2})?/)?",A=new RegExp(y+"(checkout/?|cart/c/[\\w-]+/?)$","i"),R=new RegExp(y+"cart/?$","i"),x=["click","submit"],T={},o=null,v,k=!1;function b(t){for(var e=0;e<2;e++)i[t](x[e],K,!0)}function h(){return s.querySelector("script[data-peak-key]")}function l(t,e){return t.getAttribute("data-peak-"+e)}function E(t){try{var e=new URL(t||"",p.href);return e.origin===p.origin?e.pathname:""}catch(r){return""}}function f(t){return!!t&&t.tagName==="A"}function _(t){var e=t;if(!e||!e.closest||e.closest("[data-peak-ignore]"))return null;var r=e.closest("button[name=checkout],input[name=checkout],a[href]");return r&&(!f(r)||A.test(E(r.getAttribute("href"))))?r:null}function g(t){var e=o&&(o.control||o.form);e&&(t?(e.setAttribute("aria-busy","true"),e.setAttribute("data-peak-state","loading")):(e.removeAttribute("aria-busy"),e.removeAttribute("data-peak-state")),"disabled"in e&&(e.disabled=t))}function d(){var t=o;return clearTimeout(v),b("removeEventListener"),g(!1),o=null,t}function L(t){try{var e=h(),r=(l(e,"service")||new URL(e.src).origin).replace(/\/+$/,"")+"/api/storefront/fallback",a=/(?:^|;\s*)cart=([^;]*)/.exec(s.cookie),n=a&&a[1].split(/\?|%3f/i)[0]||"";try{n=decodeURIComponent(n)}catch(u){}t.publicKey=l(e,"key"),t.shopDomain=i.Shopify&&i.Shopify.shop||l(e,"shop")||p.hostname,t.version="stub-2",t.delayMs=Math.round(performance.now()),t.path=p.pathname,n&&n.length<=200&&(t.cartToken=n),t.visibility=s.visibilityState,navigator.maxTouchPoints>1&&(t.touch=!0);var c=JSON.stringify(t);navigator.sendBeacon&&navigator.sendBeacon(r,c)||fetch(r,{method:"POST",mode:"cors",credentials:"omit",keepalive:!0,body:c}).catch(function(){})}catch(u){}}function C(t){try{var e=h(),r=t.control,a=l(e,"customer"),n=l(e,"b2b");a===null&&n!==null&&(a=n?"true":"false"),L({reason:"script_not_loaded",control:t.type==="submit"?r?"submit":"form":f(r)?"anchor":"button",link:f(r)?/\/c\//.test(E(r.getAttribute("href")))?"cart_c":"checkout":"none",config:"loading",customer:a==="true"?"logged_in":a==="false"?"guest":"unknown",early:!0})}catch(c){}}function P(t,e){T[t]||(T[t]=1,L({reason:t,stage:e}))}function F(t){var e=t.control,r=t.form;if(!r&&e&&e.isConnected)e.click();else if(r&&r.isConnected)try{r.requestSubmit(t.submitter)}catch(n){if(!new FormData(r).has("checkout")){var a=s.createElement("input");a.type="hidden",a.name="checkout",r.appendChild(a)}HTMLFormElement.prototype.submit.call(r)}else p.assign(f(e)?e.href:"/checkout")}function S(){var t=d();t&&(i.__peakCheckoutLoaded||C(t),F(t))}function H(t){var e=t.target;i.__peakCheckoutLoaded||!e||e.tagName!=="SCRIPT"||l(e,"key")===null||(k=!0,P("script_error",t.type==="error"?"load":"run"),o&&S())}function K(t){var e=t.target;if(i.__peakCheckoutLoaded){d();return}var r=h();if(!(t.defaultPrevented||!r||l(r,"b2b")==="true")){var a;if(t.type==="click"){var n=t;if(n.button||n.altKey||n.ctrlKey||n.metaKey||n.shiftKey)return;var c=_(t.composedPath?t.composedPath()[0]||null:e);if(!c)return;a={type:"click",control:c,form:null,submitter:null}}else{var u=e,m=t.submitter||null,M=m&&_(m);if(!M&&!(!u.closest("[data-peak-ignore]")&&/^post$/i.test(u.getAttribute("method")||"")&&R.test(E(u.getAttribute("action")))&&(new FormData(u).has("checkout")||m&&m.getAttribute("name")==="checkout")))return;a={type:"submit",control:M,form:u,submitter:m}}if(k){d(),C(a);return}t.preventDefault(),t.stopImmediatePropagation(),g(!1),o=a,g(!0),v||(v=setTimeout(S,8e3))}}i.__peakCheckoutEarly={take:d},b("addEventListener"),i.addEventListener("error",H,!0),s.addEventListener("load",H,!0),setTimeout(function(){!i.__peakCheckoutLoaded&&!k&&P("script_late")},8e3)})(window,document,location);</script><script src="https://peakcheckout.com/peak-checkout.js" data-peak-key="peak_pk_qTBuC_5So9ZzIMs3-wlW8Fvjhz4Xdkf_" data-peak-country="{{ localization.country.iso_code }}" data-peak-market="{{ localization.market.handle }}" data-peak-market-id="{{ localization.market.id }}" data-peak-language="{{ localization.language.iso_code }}" data-peak-b2b="{{ customer.b2b? }}" defer></script>
+
+</body>
+</html>
